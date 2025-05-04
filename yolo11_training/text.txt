@@ -1,0 +1,10 @@
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+nvidia-smi
+nvcc --version
+yolo help
+
+tree
+tree /f
+Get-ChildItem -Recurse -Depth 3
+# type data.yaml
+(universal) C:\Users\vedaa\OneDrive\Desktop\beakyy\yolo11_training>yolo detect train data=datasets/data.yaml model=yolo11n.pt epochs=100 imgsz=640  

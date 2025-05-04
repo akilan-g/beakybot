@@ -1,0 +1,14 @@
+train: C:/Users/vedaa/OneDrive/Desktop/beakyy/yolo11_training/datasets/train/images
+val: C:/Users/vedaa/OneDrive/Desktop/beakyy/yolo11_training/datasets/valid/images
+test: C:/Users/vedaa/OneDrive/Desktop/beakyy/yolo11_training/datasets/test/images
+
+nc: 1
+names: ['crow']
+
+
+roboflow:
+  workspace: vedant-ljbmt
+  project: crow-beaky
+  version: 5
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/vedant-ljbmt/crow-beaky/dataset/5

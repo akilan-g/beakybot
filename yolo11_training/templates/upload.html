@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YOLOv11 Image Upload</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #333; }
+        .upload-box { border: 2px dashed #ccc; padding: 20px; text-align: center; margin: 20px 0; }
+        .btn { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; cursor: pointer; }
+        .btn:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+    <h1>YOLOv11 Object Detection</h1>
+    <p>Upload an image to detect objects using your trained model</p>
+    
+    <form method="post" enctype="multipart/form-data">
+        <div class="upload-box">
+            <input type="file" name="file" id="file" accept="image/*">
+            <p>or drag and drop files here</p>
+        </div>
+        <input type="submit" value="Upload & Detect" class="btn">
+    </form>
+</body>
+</html>
