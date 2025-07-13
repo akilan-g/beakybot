@@ -1,188 +1,173 @@
-````markdown
-# 🦾 YOLO NCNN Object Detection on Raspberry Pi 5
+# 🧠 YOLOv11 NCNN Object Detection on Raspberry Pi 5
 
-This project demonstrates **high-performance object detection** using **YOLOv11 models** exported to the **NCNN format**, optimized to run on edge devices like the **Raspberry Pi 5**.
-
-It provides a Python-based interface (`yolo_detect.py`) to detect objects from:
-- 📸 USB/CSI cameras
-- 🎞️ Video files
-- 🖼️ Directories of images
+This project enables **real-time object detection** using **YOLOv11 models** in the **NCNN format**, optimized for edge devices like the **Raspberry Pi 5**.
 
 ---
 
-## 📊 Why Use NCNN?
+## 📁 Clone Repository
 
-**NCNN** is a high-performance neural network inference framework specifically designed for mobile and embedded platforms like **Raspberry Pi**.
+Make sure to clone the correct branch:
 
-From benchmark tests (see `yolo-format-speeds.png`):
-
-- NCNN has **the fastest inference speed** among all formats (PyTorch, ONNX, TFLite, etc.)
-- It uses **lower memory** and **CPU**, making it ideal for real-time applications.
+```bash
+git clone -b yolov11-ncnn-pi5 https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
+```
 
 ---
 
-## 🧰 Requirements
+## 📦 Prerequisites
 
-Ensure your Raspberry Pi (preferably Pi 5) is set up with the following:
+### 🔧 System Setup
 
-### 🔗 System Dependencies
+Update and install system-level packages:
 
-Install system packages:
 ```bash
 sudo apt update && sudo apt upgrade -y
-sudo apt install git python3 python3-opencv python3-pip libopencv-dev wget
-````
-
-Optional for camera support:
-
-```bash
-sudo apt install python3-picamera2 libcamera-apps
-```
-
-### 📦 Python Libraries
-
-Install Python dependencies:
-
-```bash
-pip install ultralytics opencv-python numpy flask
-```
-
-### 🧠 YOLOv11 + NCNN Tools
-
-Make sure to clone or install:
-
-* [Ultralytics YOLOv11](https://github.com/ultralytics/ultralytics)
-* [Tencent NCNN](https://github.com/Tencent/ncnn) – follow official build instructions or use precompiled versions.
-
----
-
-## 📁 Folder Structure
-
-```plaintext
-crow-main/
-├── best.pt                       # Original YOLOv11 model
-├── cam.py                        # (Optional) Script for camera capture
-├── cam-ras.py                    # (Optional) Script for Raspberry Pi camera
-├── yolo_detect.py                # Python detection script using NCNN
-├── yolo_v11_final.ipynb          # Training / experimentation notebook
-├── yolo-format-speeds.png        # Benchmark comparison image
-├── README.md                     # You are reading it now!
-├── yolo11n_ncnn_model.param      # Exported NCNN model file
-├── yolo11n_ncnn_model.bin        # Exported NCNN model weights
-└── img_dir/
-    ├── image1.jpg
-    ├── image2.jpg
-    └── ...
+sudo apt install git python3 python3-pip python3-opencv libopencv-dev wget
+sudo apt install python3-picamera2 libcamera-apps  # (For Pi Camera)
 ```
 
 ---
 
-## 🚀 Step-by-Step Guide
+## 📥 Install Dependencies
 
-### ✅ 1. Export YOLOv11 Model to NCNN Format
+Install all Python dependencies:
 
-Use Ultralytics to convert your `.pt` model:
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 🧪 Verify System Compatibility
+
+Ensure the following software is working:
+
+- `python3 --version`
+- `pip --version`
+- `libcamera-hello` (for Pi camera test)
+- `opencv_version` (check OpenCV installation)
+
+---
+## 🔄 Convert YOLOv11 `.pt` to NCNN Format
+
+First, install the required export tools:
+
+```bash
+pip install ultralytics ncnn
+```
+
+Then, use Ultralytics to export your trained model to NCNN format:
 
 ```bash
 yolo export model=best.pt format=ncnn
 ```
 
-This will create:
+This will generate two files:
 
-* `best_ncnn_model.param`
-* `best_ncnn_model.bin`
+- `best_ncnn_model.param`
+- `best_ncnn_model.bin`
 
-Place both files in the project directory.
+✅ **Make sure both files are present in your working directory before proceeding.**
 
----
 
-### ✅ 2. Download the Detection Script
+## 📸 Run Live Object Detection
 
-If not already present:
-
-```bash
-wget https://ejtech.io/code/yolo_detect.py
-```
-
-> This script handles loading the NCNN model, preprocessing input, and performing inference.
-
----
-
-### ✅ 3. Run the Detector
-
-#### a. 🔴 Live Detection using USB or Pi Camera
+Use the Pi Camera or USB webcam to start detection:
 
 ```bash
 python3 yolo_detect.py --model=best_ncnn_model --source=picamera0 --resolution=640x480
 ```
 
-* `--model`: prefix of `.param` and `.bin` files
-* `--source`: input stream (`picamera0`, `usb0`, etc.)
-* `--resolution`: width x height (match model training)
-
-#### b. 🎥 Run on a Video File
+For USB webcam, use:
 
 ```bash
-python3 yolo_detect.py --model=best_ncnn_model --source=test_video.mp4
+python3 yolo_detect.py --model=best_ncnn_model --source=usb0 --resolution=640x480
 ```
-
-#### c. 🖼️ Run on a Directory of Images
-
-```bash
-python3 yolo_detect.py --model=best_ncnn_model --source=img_dir
-```
-
-> Output will be displayed in a window or optionally saved to disk (modify script).
 
 ---
 
-## 🧠 Internals of `yolo_detect.py`
+## 🧪 Camera Troubleshooting
 
-* Loads `.param` and `.bin` NCNN files
-* Initializes OpenCV video/image capture
-* Applies YOLO inference on each frame
-* Post-processes detections (bounding boxes, labels)
-* Draws results and displays/saves them
-
----
-
-## 📷 Raspberry Pi Camera Tips
-
-If using the **Pi Camera Module**, ensure it’s enabled:
+To test Pi Camera module:
 
 ```bash
 libcamera-hello
 ```
 
-To test with PiCam:
+Ensure:
 
-```bash
-python3 yolo_detect.py --source=picamera0
-```
-
-If not working, check:
-
-* `libcamera` configuration
-* Camera connection
-* Permissions
+- Camera ribbon is connected properly
+- Camera interface is enabled in `raspi-config`
+- Required libraries like `libcamera` are installed
 
 ---
 
-## 💡 Notes & Tips
+## 🛠️ Customization (Optional)
 
-* Use **YOLOv11n or YOLOv11s** for best performance on Raspberry Pi
-* Keep image resolution **low (e.g., 640x480)** for faster results
-* You may modify `yolo_detect.py` for:
+You can modify `yolo_detect.py` to:
 
-  * Custom drawing styles
-  * Saving output
-  * Adding logging or performance metrics
+- Save annotated images or videos
+- Log detection results (e.g., timestamp, class, confidence)
+- Customize bounding box colors, font, thickness
 
 ---
 
-## 📊 Performance Benchmark (Reference)
+## 📊 Performance Tip
+
+Use smaller models like `YOLOv11n` or `YOLOv11s` and a resolution of `640x480` for best performance on the Raspberry Pi 5.
 
 ![YOLO format speed](./yolo-format-speeds.png)
 
-**NCNN beats all other formats**, giving real-time performance on Raspberry Pi 5.
+✅ **NCNN delivers the fastest inference and lowest memory usage** among PyTorch, ONNX, and TFLite formats — perfect for edge AI.
+
+---
+
+## 📄 `requirements.txt`
+
+Save the provided list of packages as `requirements.txt`.  
+Install with:
+
+```bash
+pip install -r requirements.txt
+```
+
+<details>
+<summary>📘 Click to view full <code>requirements.txt</code></summary>
+
+```txt
+asgiref==3.6.0
+astroid==2.14.2
+...
+ultralytics==8.3.155
+ultralytics-thop==2.0.14
+...
+wrapt==1.14.1
+zipp==1.0.0
+```
+
+</details>
+
+---
+
+## ✅ Checklist
+
+- [x] Clone correct branch ✅  
+- [x] Install system dependencies ✅  
+- [x] Install Python requirements ✅  
+- [x] Convert `best.pt` to NCNN ✅  
+- [x] Verify model files exist ✅  
+- [x] Run detection using Pi or USB camera ✅  
+
+---
+
+## 📬 Contact
+
+For support or questions, open an issue or contact [Vedant Singh](mailto:vedaantsinngh@gmail.com).
+
+```bash
+# Run command example
+python3 yolo_detect.py --model=best_ncnn_model --source=picamera0 --resolution=640x480
+```
+
 ---
