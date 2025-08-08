@@ -1,19 +1,9 @@
 # 🧠 YOLOv11 NCNN Object Detection on Raspberry Pi 5
 
-This project enables **real-time object detection** using **YOLOv11 models** in the **NCNN format**, optimized for edge devices like the **Raspberry Pi 5**.
+**real-time bird detection** using **YOLOv11 models** in the **NCNN format**, optimized for edge devices like the **Raspberry Pi 5**.
 
 ---
 
-## 📁 Clone Repository
-
-Make sure to clone the correct branch:
-
-```bash
-git clone -b yolov11-ncnn-pi5 https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
-```
-
----
 
 ## 📦 Prerequisites
 
@@ -92,7 +82,7 @@ python3 yolo_detect.py --model=best_ncnn_model --source=usb0 --resolution=640x48
 To test Pi Camera module:
 
 ```bash
-libcamera-hello
+rpicam-hello
 ```
 
 Ensure:
@@ -152,21 +142,15 @@ zipp==1.0.0
 
 ## ✅ Checklist
 
-- [x] Clone correct branch ✅  
 - [x] Install system dependencies ✅  
 - [x] Install Python requirements ✅  
 - [x] Convert `best.pt` to NCNN ✅  
 - [x] Verify model files exist ✅  
 - [x] Run detection using Pi or USB camera ✅  
 
----
-
-## 📬 Contact
-
-For support or questions, open an issue or contact [Vedant Singh](mailto:vedaantsinngh@gmail.com).
-
-```bash
 # Run command example
+```bash
+
 python3 yolo_detect.py --model=best_ncnn_model --source=picamera0 --resolution=640x480
 ```
 
