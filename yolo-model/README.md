@@ -1,6 +1,4 @@
-# 🧠 YOLOv11 NCNN Object Detection on Raspberry Pi 5
-
-**real-time bird detection** using **YOLOv11 models** in the **NCNN format**, optimized for edge devices like the **Raspberry Pi 5**.
+## **Real-time bird detection** using **YOLOv11 models** in the **NCNN format**, optimized for edge devices like the **Raspberry Pi 5**.
 
 ---
 
