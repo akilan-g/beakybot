@@ -12,16 +12,15 @@ picam2.set_controls({"AeEnable": False, "ExposureTime": 20000, "AnalogueGain": 2
 print("Exposure locked. Recording...")
 
 try:
-    # Use the filename string directly here; 
-    # newer Picamera2 versions handle the FileOutput wrapper automatically 
-    # if you don't pass a custom encoder.
-    picam2.start_recording("exposure_test.h264")
+    # Explicitly define the output and encoder for this version of Picamera2
+    picam2.start_recording(output="exposure_test.h264")
     
-    # Alternatively, if that STILL fails, use the keyword explicitly:
-    # picam2.start_recording(output="exposure_test.h264")
-    
-    time.sleep(10)
+    input("Recording... Press ENTER to stop.")
+
+except Exception as e:
+    print(f"An error occurred: {e}")
 
 finally:
     picam2.stop_recording()
     picam2.close()
+    print("Camera closed.")
