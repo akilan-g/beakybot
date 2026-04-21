@@ -1,8 +1,11 @@
 # BeakyBot
 BeakyBot is an AI-powered birding device for bird conservationists, nature enthusiasts, bird watchers and birders offering a smart way to monitor and study the birds.
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/4b8fe6bd-181d-44fa-b1fd-d6dac4a79aa0"width="400" height="300"/>
+  <img width="687" height="521" alt="image" src="https://github.com/user-attachments/assets/70c64862-3df1-4e0c-85d0-b7dad118a559" />
 </p>
+
+
+
 
 
 # Dependencies
