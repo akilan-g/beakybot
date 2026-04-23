@@ -2,178 +2,163 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BeakyBot | AI Birding</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeakyBot | Full-Screen Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #030712;
             --accent: #22c55e;
-            --glass: rgba(255, 255, 255, 0.04);
             --border: rgba(255, 255, 255, 0.1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
             color: white;
-            line-height: 1.5;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
         }
 
-        /* Desktop Scroll Snapping - Only for screens wider than 1024px */
-        @media (min-width: 1025px) {
-            html { scroll-snap-type: y mandatory; }
-            section { height: 100vh; scroll-snap-align: start; }
-        }
-
-        /* Modern Glass Nav */
+        /* Glass Nav */
         nav {
             position: fixed;
-            bottom: 20px; /* Mobile-friendly bottom nav */
+            top: 30px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 1000;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 10px 20px;
+            background: rgba(3, 7, 18, 0.7);
+            backdrop-filter: blur(15px);
+            padding: 15px 30px;
             border-radius: 50px;
             border: 1px solid var(--border);
             display: flex;
-            gap: 20px;
-            width: max-content;
+            gap: 40px;
         }
-        
-        @media (min-width: 768px) {
-            nav { top: 20px; bottom: auto; }
-        }
-
-        nav a { color: white; text-decoration: none; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; }
+        nav a { color: white; text-decoration: none; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; transition: 0.3s; }
         nav a:hover { opacity: 1; color: var(--accent); }
 
-        /* Sections */
+        /* Full Screen Section Setup */
         section {
+            height: 100vh;
+            width: 100vw;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 60px 20px;
+            scroll-snap-align: start;
             position: relative;
-        }
-
-        .hero h1 { 
-            font-size: clamp(3rem, 10vw, 6rem); 
-            letter-spacing: -4px; 
-            background: linear-gradient(to bottom, #fff, #666);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p { font-size: 1.2rem; opacity: 0.5; max-width: 500px; text-align: center; }
-
-        /* Image Handling */
-        .container { width: 100%; max-width: 1100px; text-align: center; }
-        
-        .img-wrapper {
-            width: 100%;
-            margin-top: 30px;
-            border-radius: 20px;
             overflow: hidden;
-            border: 1px solid var(--border);
-            background: var(--glass);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        /* Mobile specific: If image is too small to read, allow horizontal scroll */
-        @media (max-width: 600px) {
-            .img-wrapper {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            .img-wrapper img {
-                min-width: 600px; /* Forces enough size to read text on mobile */
-            }
+        /* The Hero Section */
+        .hero-content {
+            text-align: center;
+            z-index: 10;
         }
+        h1 { font-size: 7rem; letter-spacing: -5px; margin-bottom: 10px; line-height: 0.9; }
+        .tagline { font-size: 1.5rem; opacity: 0.5; font-weight: 300; }
 
-        img { width: 100%; height: auto; display: block; }
-
-        .btn {
-            background: white;
-            color: black;
-            padding: 16px 32px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 700;
-            margin-top: 30px;
-            transition: 0.3s;
+        /* Full Screen Image Styling */
+        .full-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Keeps the whole infographic visible */
+            background-color: var(--bg);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
-        .btn-primary { background: var(--accent); color: #052e16; }
-
-        /* Bento Grid - Stacks on Mobile */
-        .bento {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 1100px;
+        /* Optional: Add a slight zoom effect when the section is active */
+        section:hover .full-image {
+            transform: scale(1.03);
         }
 
+        .image-caption {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--border);
+        }
+
+        /* Bento Footer */
+        .bento-container {
+            width: 100%;
+            max-width: 1400px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 40px;
+        }
         .bento-card {
-            background: var(--glass);
+            background: rgba(255,255,255,0.03);
             border: 1px solid var(--border);
             padding: 40px;
             border-radius: 30px;
-            text-align: left;
         }
+        .large { grid-column: span 2; }
+        .btn {
+            background: var(--accent);
+            color: #052e16;
+            padding: 20px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 800;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 <body>
 
     <nav>
         <a href="#home">Home</a>
-        <a href="#features">AI</a>
-        <a href="#id">ID</a>
+        <a href="#behavior">Behavior</a>
+        <a href="#id">Recognition</a>
+        <a href="#join">Mission</a>
     </nav>
 
-    <section id="home" class="hero">
-        <h1>beakybot</h1>
-        <p>Advanced AI bird behavior analysis. Built for the next generation of conservation.</p>
-        <a href="#features" class="btn btn-primary">Get Started</a>
+    <section id="home">
+        <div class="hero-content">
+            <h1>beakybot</h1>
+            <p class="tagline">The ultimate window into the avian world.</p>
+        </div>
     </section>
 
-    <section id="features">
-        <div class="container">
-            <h2 style="font-size: 2rem; margin-bottom: 10px;">Behavior Detection</h2>
-            <p style="opacity: 0.5;">Swipe image to see details on mobile →</p>
-            <div class="img-wrapper">
-                <img src="behavior.png" alt="Behavior Analysis">
-            </div>
+    <section id="behavior">
+        <img src="behavior.png" class="full-image" alt="Behavior Analysis Infographic">
+        <div class="image-caption">
+            <h3>Module 01: AI Behavior Analysis</h3>
         </div>
     </section>
 
     <section id="id">
-        <div class="container">
-            <h2 style="font-size: 2rem; margin-bottom: 10px;">Befriend a Bird</h2>
-            <p style="opacity: 0.5;">AI-driven individual recognition</p>
-            <div class="img-wrapper">
-                <img src="bird-id.png" alt="Bird ID">
-            </div>
+        <img src="bird-id.png" class="full-image" alt="Bird Identification Infographic">
+        <div class="image-caption">
+            <h3>Module 02: Individual Recognition</h3>
         </div>
     </section>
 
-    <section id="footer">
-        <div class="bento">
-            <div class="bento-card">
-                <h3>Hardware</h3>
-                <p style="opacity: 0.6; margin-top: 10px;">Rugged, weatherproof, and designed for 365-day monitoring.</p>
+    <section id="join">
+        <div class="bento-container">
+            <div class="bento-card large">
+                <h2>Rebuilding Villages. Protecting Species.</h2>
+                <p style="margin-top: 20px; opacity: 0.6; font-size: 1.2rem;">BeakyBot is more than a camera; it's a tool for large-scale ecological restoration and community integration.</p>
+                <a href="#" class="btn">Partner with us</a>
             </div>
-            <div class="bento-card" style="background: var(--accent); color: #052e16;">
-                <h3>Join the Pilot</h3>
-                <p style="margin-top: 10px; font-weight: 600;">Be the first to test BeakyBot in your region.</p>
-                <a href="#" class="btn" style="margin-top: 20px; display: inline-block;">Sign Up</a>
+            <div class="bento-card">
+                <h3>Edge Specs</h3>
+                <ul style="margin-top: 20px; list-style: none; line-height: 2.5; opacity: 0.8;">
+                    <li>● On-device AI Processing</li>
+                    <li>● Night Vision Enabled</li>
+                    <li>● Solar Compatible</li>
+                </ul>
             </div>
         </div>
     </section>
