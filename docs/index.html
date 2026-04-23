@@ -3,154 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeakyBot | Intelligence in Nature</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>BeakyBot | Animated Reveal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #000000;
-            --accent: #22c55e;
-        }
-
+        /* (The CSS is largely the same, we just add the animation parts) */
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --apple-black: #000000; --apple-gray: #1d1d1f; }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--apple-black);
             color: #fff;
             overflow-x: hidden;
-            /* Apple-style smooth snapping */
             scroll-snap-type: y mandatory;
         }
 
-        /* Top Nav - Apple Style */
+        /* Minimalist Nav Bar */
         nav {
             position: fixed;
             top: 0;
             width: 100%;
-            height: 44px;
+            height: 48px;
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: saturate(180%) blur(20px);
+            z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        nav a {
-            color: #f5f5f7;
-            text-decoration: none;
-            font-size: 12px;
-            padding: 0 20px;
-            opacity: 0.8;
-            transition: opacity 0.3s;
-        }
-        nav a:hover { opacity: 1; }
+        nav a { color: #f5f5f7; text-decoration: none; font-size: 12px; padding: 0 22px; opacity: 0.8; }
 
-        /* Full Screen Section */
+        /* The Container */
         section {
             height: 100vh;
             width: 100vw;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             scroll-snap-align: start;
+            overflow: hidden;
+            background-color: #fff; /* Most of your images have white backgrounds */
             position: relative;
-            background-repeat: no-repeat;
-            background-position: center center;
-            background-size: cover; /* This makes it fill the screen like Apple */
         }
 
-        /* Hero Text Styles */
-        .hero-title {
-            text-align: center;
-            z-index: 10;
-        }
+        #hero { background-color: var(--apple-black); }
+        .hero-content h1 { font-size: clamp(48px, 10vw, 96px); font-weight: 700; letter-spacing: -0.04em; text-align: center; }
 
-        .hero-title h1 {
-            font-size: clamp(40px, 8vw, 80px);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 10px;
-        }
+        /* --- THE NEW ANIMATION CSS --- */
 
-        .hero-title p {
-            font-size: 24px;
-            font-weight: 300;
-            color: #86868b;
-        }
-
-        /* Assigning the images to sections as Backgrounds */
-        #hero { background-color: #000; }
-        
-        /* The images are now part of the section itself */
-        #behavior { 
-            background-image: url('behavior.png'); 
-        }
-        
-        #id { 
-            background-image: url('bird-id.png'); 
-        }
-
-        /* Dark overlay for the footer section */
-        #mission {
-            background: radial-gradient(circle at center, #111 0%, #000 100%);
-            padding: 80px 20px;
-        }
-
-        .bento-box {
-            max-width: 1000px;
+        /* 1. Initial State (Hidden) */
+        .apple-img {
+            height: 100%;
             width: 100%;
-            background: #161617;
-            border-radius: 30px;
-            padding: 60px;
-            text-align: center;
+            object-fit: contain;
+            /* Start state: slightly scaled down and faded out */
+            opacity: 0;
+            transform: scale(0.95);
+            /* Smooth transition timing */
+            transition: opacity 1.2s cubic-bezier(0.25, 0.1, 0.25, 1.0),
+                        transform 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .cta-btn {
-            background: #0071e3;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 980px;
-            text-decoration: none;
-            font-weight: 400;
-            font-size: 17px;
-            margin-top: 30px;
-            display: inline-block;
+        /* 2. Final State (Visible) */
+        /* This class is added by JavaScript when the user scrolls */
+        .is-active .apple-img {
+            opacity: 1;
+            transform: scale(1);
         }
 
-        .cta-btn:hover { background: #0077ed; }
+        /* Hero Text Fade In (Starts on load) */
+        .fade-in { animation: appleFade 1.5s ease; }
+        @keyframes appleFade { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
 
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            section { height: auto; min-height: 100vh; scroll-snap-align: none; }
+            .apple-img { height: auto; width: 100%; opacity: 1 !important; transform: none !important; }
+        }
     </style>
 </head>
 <body>
 
     <nav>
         <a href="#hero">BeakyBot</a>
-        <a href="#behavior">Behavior</a>
-        <a href="#id">Recognition</a>
-        <a href="#mission">Mission</a>
+        <a href="#behavior">AI Behavior</a>
+        <a href="#id">Bird ID</a>
+        <a href="#mission">Our Mission</a>
     </nav>
 
     <section id="hero">
-        <div class="hero-title">
-            <h1>beakybot</h1>
-            <p>Intelligence that flies further.</p>
+        <div class="hero-content fade-in">
+            <h1>beakybot.</h1>
+            <p style="color: #86868b; font-size: 24px; text-align: center;">Technology for the wild.</p>
         </div>
     </section>
 
-    <section id="behavior"></section>
+    <section id="behavior" style="background-color: #fbfbfb;" class="js-scroll">
+        <img src="behavior.png" class="apple-img" alt="Advanced AI Analysis">
+    </section>
 
-    <section id="id"></section>
+    <section id="id" style="background-color: #fbfbfb;" class="js-scroll">
+        <img src="bird-id.png" class="apple-img" alt="Individual Bird Identification">
+    </section>
 
-    <section id="mission">
-        <div class="bento-box">
-            <h2 style="font-size: 48px; margin-bottom: 20px;">Designed for the wild.</h2>
-            <p style="color: #86868b; font-size: 21px; max-width: 600px; margin: 0 auto;">Integrating community, technology, and conservation into one seamless experience.</p>
-            <a href="#" class="cta-btn">Learn More</a>
+    <section id="mission" style="background-color: #000;">
+        <div style="max-width: 600px; text-align: center; padding: 20px;">
+            <h2 style="font-size: 48px; margin-bottom: 20px;">Protecting the Sky.</h2>
+            <p style="color: #86868b; font-size: 21px;">Join our community of conservationists.</p>
+            <a href="#" style="background: #0071e3; color: white; padding: 12px 24px; border-radius: 980px; text-decoration: none; display: inline-block; margin-top: 30px;">Notify Me</a>
         </div>
     </section>
+
+    <script>
+        // Find all sections that should animate
+        const scrollSections = document.querySelectorAll('.js-scroll');
+
+        // Set up the Intersection Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    // When section is in view, add the active class
+                    entry.target.classList.add('is-active');
+                    
+                    // (Optional) Stop observing once it's triggered
+                    // observer.unobserve(entry.target);
+                } else {
+                    // Remove class when it leaves view so it animates again
+                    // (Remove this 'else' block if you want it to only animate once)
+                    entry.target.classList.remove('is-active');
+                }
+            });
+        }, {
+            // How much of the section should be visible before animating (0.1 = 10%)
+            threshold: 0.2
+        });
+
+        // Tell the observer to watch each section
+        scrollSections.forEach((section) => {
+            observer.observe(section);
+        });
+    </script>
 
 </body>
 </html>
