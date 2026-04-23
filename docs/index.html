@@ -3,44 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeakyBot | Full-Screen Experience</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;700&display=swap" rel="stylesheet">
+    <title>BeakyBot | Intelligence in Nature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #030712;
+            --bg: #000000;
             --accent: #22c55e;
-            --border: rgba(255, 255, 255, 0.1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
-            color: white;
+            color: #fff;
             overflow-x: hidden;
+            /* Apple-style smooth snapping */
             scroll-snap-type: y mandatory;
         }
 
-        /* Glass Nav */
+        /* Top Nav - Apple Style */
         nav {
             position: fixed;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            background: rgba(3, 7, 18, 0.7);
-            backdrop-filter: blur(15px);
-            padding: 15px 30px;
-            border-radius: 50px;
-            border: 1px solid var(--border);
+            top: 0;
+            width: 100%;
+            height: 44px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
             display: flex;
-            gap: 40px;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-        nav a { color: white; text-decoration: none; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; transition: 0.3s; }
-        nav a:hover { opacity: 1; color: var(--accent); }
 
-        /* Full Screen Section Setup */
+        nav a {
+            color: #f5f5f7;
+            text-decoration: none;
+            font-size: 12px;
+            padding: 0 20px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        nav a:hover { opacity: 1; }
+
+        /* Full Screen Section */
         section {
             height: 100vh;
             width: 100vw;
@@ -50,116 +57,98 @@
             align-items: center;
             scroll-snap-align: start;
             position: relative;
-            overflow: hidden;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover; /* This makes it fill the screen like Apple */
         }
 
-        /* The Hero Section */
-        .hero-content {
+        /* Hero Text Styles */
+        .hero-title {
             text-align: center;
             z-index: 10;
         }
-        h1 { font-size: 7rem; letter-spacing: -5px; margin-bottom: 10px; line-height: 0.9; }
-        .tagline { font-size: 1.5rem; opacity: 0.5; font-weight: 300; }
 
-        /* Full Screen Image Styling */
-        .full-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* Keeps the whole infographic visible */
-            background-color: var(--bg);
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        .hero-title h1 {
+            font-size: clamp(40px, 8vw, 80px);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 10px;
+        }
+
+        .hero-title p {
+            font-size: 24px;
+            font-weight: 300;
+            color: #86868b;
+        }
+
+        /* Assigning the images to sections as Backgrounds */
+        #hero { background-color: #000; }
+        
+        /* The images are now part of the section itself */
+        #behavior { 
+            background-image: url('behavior.png'); 
         }
         
-        /* Optional: Add a slight zoom effect when the section is active */
-        section:hover .full-image {
-            transform: scale(1.03);
+        #id { 
+            background-image: url('bird-id.png'); 
         }
 
-        .image-caption {
-            position: absolute;
-            bottom: 40px;
-            left: 40px;
-            background: rgba(0,0,0,0.6);
-            padding: 10px 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
-            border: 1px solid var(--border);
+        /* Dark overlay for the footer section */
+        #mission {
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+            padding: 80px 20px;
         }
 
-        /* Bento Footer */
-        .bento-container {
+        .bento-box {
+            max-width: 1000px;
             width: 100%;
-            max-width: 1400px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            padding: 40px;
-        }
-        .bento-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            padding: 40px;
+            background: #161617;
             border-radius: 30px;
+            padding: 60px;
+            text-align: center;
         }
-        .large { grid-column: span 2; }
-        .btn {
-            background: var(--accent);
-            color: #052e16;
-            padding: 20px 40px;
-            border-radius: 50px;
+
+        .cta-btn {
+            background: #0071e3;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 980px;
             text-decoration: none;
-            font-weight: 800;
+            font-weight: 400;
+            font-size: 17px;
+            margin-top: 30px;
             display: inline-block;
-            margin-top: 20px;
         }
+
+        .cta-btn:hover { background: #0077ed; }
 
     </style>
 </head>
 <body>
 
     <nav>
-        <a href="#home">Home</a>
+        <a href="#hero">BeakyBot</a>
         <a href="#behavior">Behavior</a>
         <a href="#id">Recognition</a>
-        <a href="#join">Mission</a>
+        <a href="#mission">Mission</a>
     </nav>
 
-    <section id="home">
-        <div class="hero-content">
+    <section id="hero">
+        <div class="hero-title">
             <h1>beakybot</h1>
-            <p class="tagline">The ultimate window into the avian world.</p>
+            <p>Intelligence that flies further.</p>
         </div>
     </section>
 
-    <section id="behavior">
-        <img src="behavior.png" class="full-image" alt="Behavior Analysis Infographic">
-        <div class="image-caption">
-            <h3>Module 01: AI Behavior Analysis</h3>
-        </div>
-    </section>
+    <section id="behavior"></section>
 
-    <section id="id">
-        <img src="bird-id.png" class="full-image" alt="Bird Identification Infographic">
-        <div class="image-caption">
-            <h3>Module 02: Individual Recognition</h3>
-        </div>
-    </section>
+    <section id="id"></section>
 
-    <section id="join">
-        <div class="bento-container">
-            <div class="bento-card large">
-                <h2>Rebuilding Villages. Protecting Species.</h2>
-                <p style="margin-top: 20px; opacity: 0.6; font-size: 1.2rem;">BeakyBot is more than a camera; it's a tool for large-scale ecological restoration and community integration.</p>
-                <a href="#" class="btn">Partner with us</a>
-            </div>
-            <div class="bento-card">
-                <h3>Edge Specs</h3>
-                <ul style="margin-top: 20px; list-style: none; line-height: 2.5; opacity: 0.8;">
-                    <li>● On-device AI Processing</li>
-                    <li>● Night Vision Enabled</li>
-                    <li>● Solar Compatible</li>
-                </ul>
-            </div>
+    <section id="mission">
+        <div class="bento-box">
+            <h2 style="font-size: 48px; margin-bottom: 20px;">Designed for the wild.</h2>
+            <p style="color: #86868b; font-size: 21px; max-width: 600px; margin: 0 auto;">Integrating community, technology, and conservation into one seamless experience.</p>
+            <a href="#" class="cta-btn">Learn More</a>
         </div>
     </section>
 
