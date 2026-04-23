@@ -3,80 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeakyBot | AI Birding</title>
+    <title>BeakyBot | The Future of Birding</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0f172a;
-            --accent: #4ade80;
+            --bg: #030712;
+            --accent: #22c55e; /* Vibrant Birding Green */
             --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: -apple-system, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg);
             color: white;
-            margin: 0;
-            text-align: center;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory; /* Smooth section snapping */
         }
-        .header { padding: 60px 20px; }
-        h1 { font-size: 3rem; margin: 0; letter-spacing: -1px; }
-        .tagline { opacity: 0.6; font-size: 1.2rem; }
-        
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-        
-        .card {
-            background: var(--glass);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 50px;
-            transition: transform 0.3s ease;
+
+        /* Full Screen Sections */
+        section {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            scroll-snap-align: start;
+            position: relative;
         }
-        .card:hover { transform: translateY(-5px); }
-        
-        h2 { color: var(--accent); }
-        
-        img {
+
+        /* Glass Nav */
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(3, 7, 18, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 12px 24px;
+            border-radius: 40px;
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 30px;
+        }
+        nav a { color: white; text-decoration: none; font-size: 0.9rem; font-weight: 500; opacity: 0.7; transition: 0.3s; }
+        nav a:hover { opacity: 1; color: var(--accent); }
+
+        /* Hero Styling */
+        .hero-text { text-align: center; max-width: 800px; z-index: 2; }
+        .hero-text h1 { font-size: 5rem; letter-spacing: -3px; margin-bottom: 10px; }
+        .hero-text p { font-size: 1.5rem; opacity: 0.6; font-weight: 300; }
+
+        /* Feature Image Full-Screen Style */
+        .full-img-container {
             width: 100%;
-            height: auto;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-top: 20px;
+            max-width: 1200px;
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: var(--glass);
+            transition: transform 0.5s ease;
         }
-        
+        .full-img-container:hover { transform: scale(1.02); }
+        img { width: 100%; height: auto; display: block; }
+
+        /* Modern Bento Grid for Footer/Final CTA */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+        }
+        .bento-item {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 24px;
+            text-align: left;
+        }
+        .large { grid-column: span 2; }
+
         .btn {
             background: var(--accent);
-            color: #064e3b;
-            padding: 15px 30px;
-            border-radius: 30px;
+            color: #052e16;
+            padding: 18px 40px;
+            border-radius: 50px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 700;
+            margin-top: 30px;
             display: inline-block;
-            margin: 40px 0;
+            transition: 0.3s;
+        }
+        .btn:hover { box-shadow: 0 0 30px rgba(34, 197, 94, 0.4); transform: translateY(-2px); }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .hero-text { animation: fadeIn 1s ease-out; }
+
+        @media (max-width: 768px) {
+            .hero-text h1 { font-size: 3rem; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .large { grid-column: span 1; }
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>beakybot</h1>
-        <p class="tagline">Smart technology for deeper insights.</p>
-    </div>
+    <nav>
+        <a href="#home">BeakyBot</a>
+        <a href="#behavior">AI Features</a>
+        <a href="#id">Recognition</a>
+        <a href="#join">Join Us</a>
+    </nav>
 
-    <div class="container">
-        <div class="card">
-            <h2>AI Behavior Analysis</h2>
-            <p>Monitor nesting, foraging, and social interactions.</p>
-            <img src="behavior.png" alt="Bird Behavior Analysis">
+    <section id="home">
+        <div class="hero-text">
+            <h1>beakybot</h1>
+            <p>Intelligence that flies further. Conservation that works harder.</p>
+            <a href="#behavior" class="btn">Discover the Tech</a>
         </div>
+    </section>
 
-        <div class="card">
-            <h2>Befriend a Bird</h2>
-            <p>Recognize individual birds and track their visit history.</p>
-            <img src="bird-id.png" alt="Bird ID Features">
+    <section id="behavior">
+        <div class="container">
+            <h2 style="margin-bottom: 20px; font-size: 2.5rem;">Behavior Detection</h2>
+            <div class="full-img-container">
+                <img src="behavior.png" alt="AI Analysis">
+            </div>
         </div>
+    </section>
 
-        <a href="mailto:contact@beakybot.io" class="btn">Contact for Conservation</a>
-    </div>
+    <section id="id">
+        <div class="container">
+            <h2 style="margin-bottom: 20px; font-size: 2.5rem;">Unique Bird ID</h2>
+            <div class="full-img-container">
+                <img src="bird-id.png" alt="Bird Recognition">
+            </div>
+        </div>
+    </section>
+
+    <section id="join">
+        <div class="bento-grid">
+            <div class="bento-item large">
+                <h3>Our Mission</h3>
+                <p style="opacity: 0.7; margin-top: 10px;">To bridge the gap between human curiosity and avian conservation through cutting-edge AI edge devices.</p>
+                <a href="#" class="btn">Get Updates</a>
+            </div>
+            <div class="bento-item">
+                <h3>Specs</h3>
+                <ul style="list-style: none; opacity: 0.7; margin-top: 10px; line-height: 2;">
+                    <li>✓ 4K HDR Feed</li>
+                    <li>✓ 30-Day Battery</li>
+                    <li>✓ Weatherproof</li>
+                </ul>
+            </div>
+        </div>
+        <p style="margin-top: 50px; opacity: 0.4;">© 2026 BeakyBot Project</p>
+    </section>
 
 </body>
 </html>
