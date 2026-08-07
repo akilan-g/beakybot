@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bird Detection System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .loader {
+            border-top-color: #3498db;
+            -webkit-animation: spinner 1.5s linear infinite;
+            animation: spinner 1.5s linear infinite;
+        }
+        
+        @-webkit-keyframes spinner {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl font-bold text-blue-600 mb-2">Bird Detection System</h1>
+            <p class="text-lg text-gray-600">Detect birds in real-time with YOLOv11</p>
+        </header>
+
+        <div class="flex flex-col lg:flex-row gap-6">
+            <!-- Left sidebar with options -->
+            <div class="lg:w-1/4 bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-6 text-gray-800">Detection Options</h2>
+                
+                <div class="mb-8">
+                    <h3 class="font-medium text-gray-700 mb-3">Choose Detection Method</h3>
+                    <div class="flex flex-col space-y-2">
+                        <button id="webcamBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors">
+                            Webcam Detection
+                        </button>
+                        <button id="uploadImageBtn" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition-colors">
+                            Upload Image
+                        </button>
+                        <button id="uploadVideoBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded transition-colors">
+                            Upload Video
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="uploadControls" class="hidden mb-6">
+                    <input type="file" id="fileInput" class="hidden" accept="image/*,video/*">
+                    <label for="fileInput" class="block w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded text-center cursor-pointer transition-colors mb-2">
+                        Choose File
+                    </label>
+                    <p id="fileName" class="text-sm text-gray-600 truncate">No file selected</p>
+                    <button id="processFileBtn" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors" disabled>
+                        Process File
+                    </button>
+                </div>
+                
+                <div id="webcamControls" class="hidden mb-6">
+                    <button id="startWebcamBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors mb-3">
+                        Start Camera
+                    </button>
+                    <button id="captureBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition-colors mb-3 hidden">
+                        Capture Frame
+                    </button>
+                    <button id="startLiveDetectionBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition-colors hidden">
+                        Start Live Detection
+                    </button>
+                    <button id="stopLiveDetectionBtn" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded transition-colors hidden">
+                        Stop Live Detection
+                    </button>
+                </div>
+                
+                <div id="detectionStats" class="hidden p-4 bg-gray-100 rounded-lg">
+                    <h3 class="font-medium text-gray-700 mb-2">Detection Results</h3>
+                    <p id="birdCount" class="text-sm text-gray-600">Birds detected: <span class="font-semibold">0</span></p>
+                    <p id="processingTime" class="text-sm text-gray-600">Processing time: <span class="font-semibold">0 ms</span></p>
+                </div>
+            </div>
+            
+            <!-- Main content area -->
+            <div class="lg:w-3/4 bg-white p-6 rounded-lg shadow-md">
+                <div id="contentArea" class="flex flex-col items-center justify-center min-h-[400px]">
+                    <!-- Initial state -->
+                    <div id="initialState" class="text-center">
+                        <svg class="w-24 h-24 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                        </svg>
+                        <p class="mt-4 text-gray-600">Select a detection method to get started</p>
+                    </div>
+                    
+                    <!-- Webcam view -->
+                    <div id="webcamView" class="hidden w-full">
+                        <video id="webcam" class="w-full max-h-[600px] bg-black rounded-lg" autoplay playsinline></video>
+                        <canvas id="webcamOverlay" class="hidden absolute top-0 left-0"></canvas>
+                    </div>
+                    
+                    <!-- Image/Video preview -->
+                    <div id="mediaPreview" class="hidden w-full">
+                        <img id="imagePreview" class="hidden max-h-[600px] mx-auto rounded-lg shadow-md" alt="Preview">
+                        <video id="videoPreview" class="hidden w-full max-h-[600px] mx-auto rounded-lg shadow-md" controls></video>
+                    </div>
+                    
+                    <!-- Result display -->
+                    <div id="resultDisplay" class="hidden w-full">
+                        <img id="resultImage" class="hidden max-h-[600px] mx-auto rounded-lg shadow-md" alt="Detection Result">
+                        <video id="resultVideo" class="hidden w-full max-h-[600px] mx-auto rounded-lg shadow-md" controls></video>
+                    </div>
+                    
+                    <!-- Loading indicator -->
+                    <div id="loadingIndicator" class="hidden flex flex-col items-center">
+                        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+                        <p id="loadingText" class="text-gray-600">Processing...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const webcamBtn = document.getElementById('webcamBtn');
+        const uploadImageBtn = document.getElementById('uploadImageBtn');
+        const uploadVideoBtn = document.getElementById('uploadVideoBtn');
+        const uploadControls = document.getElementById('uploadControls');
+        const webcamControls = document.getElementById('webcamControls');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const processFileBtn = document.getElementById('processFileBtn');
+        const startWebcamBtn = document.getElementById('startWebcamBtn');
+        const captureBtn = document.getElementById('captureBtn');
+        const startLiveDetectionBtn = document.getElementById('startLiveDetectionBtn');
+        const stopLiveDetectionBtn = document.getElementById('stopLiveDetectionBtn');
+        const initialState = document.getElementById('initialState');
+        const webcamView = document.getElementById('webcamView');
+        const mediaPreview = document.getElementById('mediaPreview');
+        const imagePreview = document.getElementById('imagePreview');
+        const videoPreview = document.getElementById('videoPreview');
+        const resultDisplay = document.getElementById('resultDisplay');
+        const resultImage = document.getElementById('resultImage');
+        const resultVideo = document.getElementById('resultVideo');
+        const webcam = document.getElementById('webcam');
+        const webcamOverlay = document.getElementById('webcamOverlay');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const loadingText = document.getElementById('loadingText');
+        const detectionStats = document.getElementById('detectionStats');
+        const birdCount = document.getElementById('birdCount').querySelector('span');
+        const processingTime = document.getElementById('processingTime').querySelector('span');
+
+        // Variables
+        let currentMode = null;
+        let stream = null;
+        let isLiveDetection = false;
+        let liveDetectionInterval = null;
+
+        // Event listeners
+        webcamBtn.addEventListener('click', () => setMode('webcam'));
+        uploadImageBtn.addEventListener('click', () => setMode('image'));
+        uploadVideoBtn.addEventListener('click', () => setMode('video'));
+        fileInput.addEventListener('change', handleFileSelect);
+        processFileBtn.addEventListener('click', processFile);
+        startWebcamBtn.addEventListener('click', startWebcam);
+        captureBtn.addEventListener('click', captureFrame);
+        startLiveDetectionBtn.addEventListener('click', startLiveDetection);
+        stopLiveDetectionBtn.addEventListener('click', stopLiveDetection);
+
+        // Set the detection mode
+        function setMode(mode) {
+            // Reset UI
+            hideAllViews();
+            stopLiveDetection();
+            stopWebcam();
+            
+            currentMode = mode;
+            
+            if (mode === 'webcam') {
+                webcamControls.classList.remove('hidden');
+                uploadControls.classList.add('hidden');
+                initialState.classList.remove('hidden');
+            } else {
+                // For image or video upload
+                uploadControls.classList.remove('hidden');
+                webcamControls.classList.add('hidden');
+                initialState.classList.remove('hidden');
+                
+                // Set accepted file types
+                if (mode === 'image') {
+                    fileInput.accept = 'image/*';
+                } else {
+                    fileInput.accept = 'video/*';
+                }
+                
+                // Reset file input
+                fileInput.value = '';
+                fileName.textContent = 'No file selected';
+                processFileBtn.disabled = true;
+            }
+        }
+
+        // Handle file selection
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            fileName.textContent = file.name;
+            processFileBtn.disabled = false;
+            
+            // Preview the selected file
+            const fileURL = URL.createObjectURL(file);
+            
+            if (currentMode === 'image') {
+                imagePreview.src = fileURL;
+                imagePreview.classList.remove('hidden');
+                videoPreview.classList.add('hidden');
+                mediaPreview.classList.remove('hidden');
+                initialState.classList.add('hidden');
+            } else if (currentMode === 'video') {
+                videoPreview.src = fileURL;
+                videoPreview.classList.remove('hidden');
+                imagePreview.classList.add('hidden');
+                mediaPreview.classList.remove('hidden');
+                initialState.classList.add('hidden');
+            }
+        }
+
+        // Process the selected file
+        function processFile() {
+            if (!fileInput.files[0]) return;
+            
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            
+            showLoading(currentMode === 'image' ? 'Processing image...' : 'Processing video... This may take a while');
+            
+            if (currentMode === 'image') {
+                formData.append('image', file);
+                
+                fetch('/detect_image', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    hideLoading();
+                    if (data.success) {
+                        // Display the result
+                        resultImage.src = data.image;
+                        resultImage.classList.remove('hidden');
+                        resultVideo.classList.add('hidden');
+                        resultDisplay.classList.remove('hidden');
+                        mediaPreview.classList.add('hidden');
+                        
+                        // Update stats
+                        updateDetectionStats(data.detections);
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    alert('Error: ' + error.message);
+                });
+                
+            } else if (currentMode === 'video') {
+                formData.append('video', file);
+                
+                fetch('/process_video', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    hideLoading();
+                    if (data.success) {
+                        // Display the result video
+                        resultVideo.src = data.video_url;
+                        resultVideo.classList.remove('hidden');
+                        resultImage.classList.add('hidden');
+                        resultDisplay.classList.remove('hidden');
+                        mediaPreview.classList.add('hidden');
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    alert('Error: ' + error.message);
+                });
+            }
+        }
+
+        // Start webcam
+        async function startWebcam() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
+                
+                webcam.srcObject = stream;
+                webcamView.classList.remove('hidden');
+                initialState.classList.add('hidden');
+                
+                // Show capture and live detection buttons
+                startWebcamBtn.classList.add('hidden');
+                captureBtn.classList.remove('hidden');
+                startLiveDetectionBtn.classList.remove('hidden');
+                
+            } catch (err) {
+                alert('Error accessing webcam: ' + err.message);
+            }
+        }
+
+        // Stop webcam
+        function stopWebcam() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+                webcam.srcObject = null;
+            }
+            
+            // Reset webcam UI
+            webcamView.classList.add('hidden');
+            startWebcamBtn.classList.remove('hidden');
+            captureBtn.classList.add('hidden');
+            startLiveDetectionBtn.classList.add('hidden');
+            stopLiveDetectionBtn.classList.add('hidden');
+        }
+
+        // Capture a frame from webcam
+        function captureFrame() {
+            if (!stream) return;
+            
+            // Create a canvas to capture the frame
+            const canvas = document.createElement('canvas');
+            canvas.width = webcam.videoWidth;
+            canvas.height = webcam.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+            
+            // Convert to base64
+            const imageData = canvas.toDataURL('image/jpeg');
+            
+            // Process the captured frame
+            showLoading('Processing image...');
+            
+            fetch('/detect_webcam_frame', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ image: imageData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                if (data.success) {
+                    // Display the result
+                    resultImage.src = data.image;
+                    resultImage.classList.remove('hidden');
+                    resultVideo.classList.add('hidden');
+                    resultDisplay.classList.remove('hidden');
+                    webcamView.classList.add('hidden');
+                    
+                    // Update stats
+                    updateDetectionStats(data.detections);
+                    
+                    // Return to webcam view option
+                    startWebcamBtn.classList.remove('hidden');
+                    captureBtn.classList.add('hidden');
+                    startLiveDetectionBtn.classList.add('hidden');
+                    stopLiveDetectionBtn.classList.add('hidden');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                alert('Error: ' + error.message);
+            });
+        }
+
+        // Start live detection
+        function startLiveDetection() {
+            if (!stream) return;
+            
+            isLiveDetection = true;
+            startLiveDetectionBtn.classList.add('hidden');
+            stopLiveDetectionBtn.classList.remove('hidden');
+            captureBtn.classList.add('hidden');
+            
+            // Call detection every 500ms
+            processLiveFrame();
+            liveDetectionInterval = setInterval(processLiveFrame, 500);
+        }
+
+        // Process a live frame
+        function processLiveFrame() {
+            if (!isLiveDetection || !stream) return;
+            
+            // Create a canvas to capture the frame
+            const canvas = document.createElement('canvas');
+            canvas.width = webcam.videoWidth;
+            canvas.height = webcam.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+            
+            // Convert to base64
+            const imageData = canvas.toDataURL('image/jpeg');
+            
+            // Process the captured frame
+            const startTime = performance.now();
+            
+            fetch('/detect_webcam_frame', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ image: imageData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && isLiveDetection) {
+                    // Display the result directly on the video element
+                    const img = new Image();
+                    img.onload = function() {
+                        // Draw the result on the webcam view
+                        const overlayCanvas = document.createElement('canvas');
+                        overlayCanvas.width = webcam.videoWidth;
+                        overlayCanvas.height = webcam.videoHeight;
+                        const ctx = overlayCanvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, overlayCanvas.width, overlayCanvas.height);
+                        
+                        // Replace the webcam source with the annotated frame
+                        webcam.style.display = 'none';
+                        
+                        // Display annotated frame by replacing source
+                        if (document.getElementById('annotatedFrame')) {
+                            document.getElementById('annotatedFrame').remove();
+                        }
+                        
+                        const annotatedImg = document.createElement('img');
+                        annotatedImg.id = 'annotatedFrame';
+                        annotatedImg.src = data.image;
+                        annotatedImg.className = 'w-full max-h-[600px] bg-black rounded-lg';
+                        webcamView.appendChild(annotatedImg);
+                        
+                        // Update stats
+                        const endTime = performance.now();
+                        updateDetectionStats(data.detections, endTime - startTime);
+                    };
+                    img.src = data.image;
+                }
+            })
+            .catch(error => {
+                console.error('Error in live detection:', error);
+            });
+        }
+
+        // Stop live detection
+        function stopLiveDetection() {
+            isLiveDetection = false;
+            if (liveDetectionInterval) {
+                clearInterval(liveDetectionInterval);
+                liveDetectionInterval = null;
+            }
+            
+            stopLiveDetectionBtn.classList.add('hidden');
+            startLiveDetectionBtn.classList.remove('hidden');
+            captureBtn.classList.remove('hidden');
+            
+            // Remove annotated frame if it exists
+            if (document.getElementById('annotatedFrame')) {
+                document.getElementById('annotatedFrame').remove();
+            }
+            
+            // Show webcam again
+            webcam.style.display = 'block';
+        }
+
+        // Update detection stats
+        function updateDetectionStats(count, time = 0) {
+            detectionStats.classList.remove('hidden');
+            birdCount.textContent = count;
+            processingTime.textContent = time > 0 ? `${Math.round(time)} ms` : 'N/A';
+        }
+
+        // Show loading indicator
+        function showLoading(text = 'Processing...') {
+            loadingText.textContent = text;
+            loadingIndicator.classList.remove('hidden');
+            initialState.classList.add('hidden');
+            mediaPreview.classList.add('hidden');
+            resultDisplay.classList.add('hidden');
+        }
+
+        // Hide loading indicator
+        function hideLoading() {
+            loadingIndicator.classList.add('hidden');
+        }
+
+        // Hide all views
+        function hideAllViews() {
+            initialState.classList.add('hidden');
+            webcamView.classList.add('hidden');
+            mediaPreview.classList.add('hidden');
+            resultDisplay.classList.add('hidden');
+            loadingIndicator.classList.add('hidden');
+            detectionStats.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
